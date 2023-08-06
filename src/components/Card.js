@@ -9,11 +9,31 @@ export default function Card(props) {
   const [qty, setQty] = useState(1);
   const [size, setSize] = useState("")
   const handlecart = async () => {
+    let food = []
+    for (const item of data) {
+      if (item._id === props.foodItem._id) {
+        food = item;
+
+        break;
+      }
+    }
+    if (food !== []) {
+      if (food.size === size) {
+        await dispatch({ type: "UPDATE", id: props.foodItem._id, price: finalPrice, qty: qty })
+        return
+      }
+      else if (food.size !== size) {
+        await dispatch({ type: "ADD", id: props.foodItem._id, name: props.foodItem.name, price: finalPrice, qty: qty, size: size, img: props.ImgSrc })
+        console.log("Size different so simply ADD one more to the list")
+        return
+      }
+      return
+    }
     await dispatch({ type: "ADD", id: props.foodItem._id, name: props.foodItem.name, price: finalPrice, qty: qty, size: size })
-    console.log(data);
+
   }
   let finalPrice = qty * parseInt(options[size]);
-  useEffect(()=> {
+  useEffect(() => {
     setSize(priceRef.current.value)
   }, [])
   return (
